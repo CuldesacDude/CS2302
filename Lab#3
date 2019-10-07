@@ -1,0 +1,309 @@
+
+"""
+Created on Fri Oct  4 16:30:11 2019
+
+Lab #3 
+The purpose of this lab was to learn
+how to properly implement a Sorted Linked list with 
+multiple method tools.
+
+Author: Kevin Ramirez
+Class: CS2302
+Professor: Olac Fuentes
+"""
+
+import math
+
+class Node:  
+    def __init__(self,data):  
+        self.data = data;  
+        self.next = None;  
+          
+class SortList:  
+    #Represent the head and tail of the singly linked list  
+    def __init__(self):  
+        self.head = None;  
+        self.tail = None;  
+          
+    #addNode will add a new node to the list but will not be sorted
+    def addNode(self, data):  
+        #Create a new node  
+        newNode = Node(data);  
+          
+        #Checks if the list is empty  
+        if(self.head == None):  
+            self.head = newNode;  
+            self.tail = newNode;  
+        else:  
+            self.tail.next = newNode;  
+            self.tail = newNode;  
+    
+    #merge will take a new object of the type SortList, destroy is and turn it into a normal list
+    def merge(self, new_list):
+        if new_list.head == None:
+            return
+        
+        #Turn the new_list into a list
+        ll = []
+        while new_list.head != None:
+            ll.append(new_list.head.data)
+            new_list.head = new_list.head.next
+        # the values safe from the given list will be turned into new nodes
+        for i in ll:
+            self.addNode(i)
+        # sort the original SortList
+        self.sort()
+        
+    #insert just a call to two other methods
+    #it also sorts the list automatically
+    def insert(self, i):
+        self.addNode(i)
+        self.sort()
+        
+    #Deletes all the links
+    def clear(self):
+        self.head = None
+        self.tail = self.head
+    
+    # indexOf will return the element at the given i otherwise -1
+    def indexOf(self, i):
+        if self.head == None:
+            print("List is empty")
+            return
+        iter = self.head #just a temp
+        index = 0 #this will keep adding until we get the right number
+        
+        while iter != None:
+            if index == i:
+                print("Element at index [", i, "] is {", iter.data, "}")
+                return iter.data
+            index +=1
+            iter = iter.next
+        
+        print("Element at index [", i, "] is does not exist")
+        return -1
+    
+    #Min returns the smallest element of the list
+    def Min(self):
+        #check if the head is None
+        if self.head == None:
+            print("List is empty")
+            return
+
+        #lets make sure the the list is sorted
+        self.sort()
+        print("Smallest element in list [", self.head.data, "]")
+        return self.head.data
+    
+    #Max does the same thing as Min but instead it returns the tail
+    def Max(self):
+        if self.head == None:
+            print("List is empty")
+            return
+        
+        #make sure that the list is sorted
+        self.sort()
+        print("Largest element in list [", self.tail.data, "]")
+        return self.tail.data
+    
+    def deleteNode(self, position): 
+        # If linked list is empty 
+        if self.head == None: 
+            print("list is empty")
+            return 
+        
+        temp = self.head 
+        
+        # If head needs to be removed 
+        if position == 0: 
+            self.head = temp.next
+            temp = None
+            return 
+  
+        # Find previous node of the node to be deleted 
+        for i in range(position -1): 
+            temp = temp.next
+            if temp is None: 
+                break
+  
+        # If position is more than number of nodes 
+        if temp is None: 
+            return 
+        if temp.next is None: 
+            return 
+        # Node temp.next is the node to be deleted 
+        # store pointer to the next of node to be deleted 
+        next = temp.next.next
+
+        # Unlink the node from linked list 
+        temp.next = None
+        temp.next = next
+        temp = self.head
+        
+        #setting the tail right
+        while temp != None:
+            self.tail = temp
+            temp = temp.next
+    
+    #Has Dulpicates will return true is there are more
+    #than 1 of the same elements in the list
+    def HasDuplicate(self):
+        #safe the head of the original list
+        iter1 = self.head
+        while iter1 != None:
+            
+            #one element ahead of iter1
+            iter2 = iter1.next
+            while iter2 != None:
+                
+                #simple comparison between the two lists
+                if iter1.data == iter2.data:
+                    print("Duplicates in list: True")
+                    return True
+                
+                iter2 = iter2.next
+                #end of the second while loop
+                
+            iter1 = iter1.next
+        
+        # if no duplicates just return False
+        print("Duplicates in list: False")
+        return False
+    
+    #Select will return k'th smallest element in the list
+    #or just math.inf
+    def Select(self, k):
+        # check if the head is None, if yes return inf
+        if self.head == None:
+            k=math.inf
+            return k
+        
+        #itterate through the list until i == k
+        iter = self.head
+        for i in range(k+1):
+            if i == k:
+                print (iter.data)
+                return iter.data
+            
+            #make sure that the list does not go out of bounds 
+            #This can happen if the size of the list is 1
+            elif iter.next == None:
+                print(math.inf)
+                return math.inf
+            iter = iter.next
+            
+        k=math.inf
+        return k
+    
+    #sort will sort nodes of the list in ascending order  
+    # similar to Bubble sort
+    def sort(self):  
+        #Holder will keep track of the head
+        holder = self.head;  
+        index = None;  
+          
+        if self.head == None:  
+            return;  
+        else:  
+            while holder != None:  
+                #Node index will point to node next to current  
+                index = holder.next;  
+                  
+                while index != None:  
+                    #If holder node's data is greater than index's node data, swap them 
+                    if holder.data > index.data:  
+                        #just change the data given but not the links
+                        temp = holder.data;  
+                        holder.data = index.data;  
+                        index.data = temp;  
+                    index = index.next;  
+                holder = holder.next;  
+                  
+    #Print will just print all the elements in whatever
+    # LL is given.
+    def Print(self):  
+        Iter = self.head;  
+        if(self.head == None):  
+            print("List is empty");  
+            print("")
+            return;  
+        while(Iter != None):  
+            print(Iter.data),  
+            Iter = Iter.next;  
+        print ("")  
+    
+    #checks if all the elements are properly sorted
+    def IsSorted(self):
+        if self.head is None:
+          return True
+          
+        check = True
+        Iter = self.head
+        while Iter.next != None:
+          if Iter.data > Iter.next.data:
+            return False
+          Iter = Iter.next
+        print("Linked List sorted:", check)
+        return check
+
+#DEbug section
+
+
+print("New Linked List 'LL'")
+
+LL = SortList()
+
+LL.insert(1)
+LL.insert(2)
+LL.insert(3)
+LL.insert(4)
+LL.insert(5)
+
+LL.Print()
+
+print("Delete element 5")
+LL.deleteNode(4)
+
+LL.Print()
+
+print("New Linked Lisk 'LL2'")
+LL2 = SortList()
+
+LL2.insert(5)
+LL2.insert(6)
+LL2.insert(9)
+LL2.insert(8)
+LL2.insert(9)
+
+LL2.Print()
+
+print("Merge LL2 into LL")
+
+LL.merge(LL2)
+
+LL.Print()
+
+LL.Min()
+LL.Max()
+
+print()
+print("Return element at index 5")
+
+LL.indexOf(5)
+
+print()
+print("Duplicates?")
+
+LL.HasDuplicate()
+
+print()
+print("Return the smallest 5-th element ")
+
+LL.Select(5)
+
+print()
+print("Clear the List")
+
+LL.clear()
+
+LL.Print()
